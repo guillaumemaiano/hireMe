@@ -1,5 +1,7 @@
 mod i18n_wrapper;
 use i18n_wrapper::I18n;
+mod hire_me_model;
+use hire_me_model::HireMeModel;
 
 use eframe::{egui, App, Frame};
 use eframe::egui::{FontData, FontDefinitions, FontFamily};
