@@ -1,0 +1,7 @@
+[package]
+name = "step02_color_hello_window"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+eframe = "0.32.3"
