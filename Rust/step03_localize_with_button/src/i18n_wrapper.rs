@@ -11,7 +11,7 @@ pub struct I18n {
 impl I18n {
     /// Create with a default language code, e.g. "en" or "fr"
     pub fn new(lang: &str) -> Self {
-        let rm = ResourceManager::new("./assets/locales/{locale}/");
+        let rm = ResourceManager::new("./assets/locales/{locale}/".to_string());
         let lang: LanguageIdentifier = lang.parse().unwrap();
         Self { rm, lang }
     }
@@ -27,15 +27,13 @@ impl I18n {
     }
 
     /// Translate a key with arguments
-    pub fn t_with_args(&self, key: &str, args: &FluentArgs) -> String {
-        // Load bundle for this lang
-        let res = self
-            .rm
-            .get_bundle(&self.lang, &["app.ftl".into()])
-            .ok()
-            .flatten();
+  pub fn t_with_args(&self, key: &str, args: &FluentArgs) -> String {
+    let res = self
+        .rm
+        .get_bundle(vec![self.lang.clone()], vec!["app.ftl".to_string()]);
 
-        if let Some(bundle) = res {
+    match res {
+        Ok(bundle) => {
             if let Some(msg) = bundle.get_message(key) {
                 if let Some(value) = msg.value() {
                     let mut errors = vec![];
@@ -43,7 +41,14 @@ impl I18n {
                     return s.to_string();
                 }
             }
+            eprintln!("FTL missing value for key `{}`", key);
         }
-        format!("{{{}}}", key) // fallback shows {key}
+        Err(errors) => {
+            eprintln!("FTL bundle load errors: {:?}", errors);
+        }
     }
+
+    format!("{{{}}}", key) // fallback shows {key}
+}
+
 }

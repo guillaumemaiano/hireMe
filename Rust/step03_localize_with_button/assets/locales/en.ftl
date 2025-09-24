@@ -32,3 +32,5 @@ language-profile = { $audience ->
        *[other] Language skill.
     }
 }
+hireme = I'm available for hire!
+website = Hire me → guillaume.maiano.fr

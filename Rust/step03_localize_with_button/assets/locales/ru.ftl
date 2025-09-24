@@ -32,3 +32,5 @@ language-profile = { $audience ->
        *[other] Языковая компетенция.
     }
 }
+hireme = Я готов к новому проекту!
+website = Смотрите мой профиль → guillaume.maiano.fr

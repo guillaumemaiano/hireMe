@@ -32,3 +32,5 @@ language-profile = { $audience ->
        *[other] Compétence linguistique.
     }
 }
+hireme = Je suis disponible pour une nouvelle mission !
+website = Engagez-moi → guillaume.maiano.fr
