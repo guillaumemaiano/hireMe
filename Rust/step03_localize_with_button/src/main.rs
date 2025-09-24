@@ -1,3 +1,6 @@
+mod i18n_wrapper;
+use i18n_wrapper::I18n;
+
 use eframe::{egui, App, Frame};
 use eframe::egui::{FontData, FontDefinitions, FontFamily};
 
