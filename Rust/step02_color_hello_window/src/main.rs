@@ -36,10 +36,9 @@ impl App for HelloApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.label("Hello, world!");
-            let special = egui::RichText::new("Special font text")
+            let special = egui::RichText::new("I'm available for hire!")
                 .font(egui::FontId::new(32.0, egui::FontFamily::Name("MyFont".into())));
-            ui.label(special);
-            ui.colored_label(egui::Color32::RED, "I’m available for hire");
+            ui.colored_label(egui::Color32::RED, special);
         });
     }
 }
