@@ -36,6 +36,7 @@ fn main() -> eframe::Result<()> {
 
             Ok(Box::new(HelloApp {
                 i18n: I18n::new("en"),
+                model: HireMeModel::new(),
             }))
         }),
     )
@@ -43,6 +44,7 @@ fn main() -> eframe::Result<()> {
 
 struct HelloApp {
     i18n: I18n,
+    model: HireMeModel,
 }
 
 impl App for HelloApp {
