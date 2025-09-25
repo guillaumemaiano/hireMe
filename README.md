@@ -14,6 +14,8 @@ Each language folder contains **step subprojects**, building up complexity in th
 ## How to Run
 
 ### Rust
-```bash
-cd rust/step01_hello_window
-cargo run```
+
+   ```bash
+   cd rust/step01_hello_window # or any other step
+   cargo run
+   ```
