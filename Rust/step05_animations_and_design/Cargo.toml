@@ -1,0 +1,10 @@
+[package]
+name = "step05_animation_and_design"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+eframe = "0.32.3"
+fluent-bundle = "0.16.0"
+fluent-resmgr = "0.0.8"
+unic-langid = "0.9.6"
