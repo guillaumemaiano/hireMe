@@ -7,9 +7,9 @@ audience = { $audience ->
 }
 
 fluency = { $level ->
-    [fluent] I can work in { $lang } with ease — meetings, writing, or negotiation.
-    [learning] I’m learning { $lang } steadily — enough to explore ideas and hold conversations.
-   *[other] I’m still building my { $lang } skills.
+    [fluent] I can work in { $langName } with ease — meetings, writing, or negotiation.
+    [learning] I’m learning { $langName } steadily — enough to explore ideas and hold conversations.
+   *[other] I’m still building my { $langName } skills.
 }
 
 language-profile = { $audience ->

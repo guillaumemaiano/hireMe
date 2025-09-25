@@ -1,3 +1,4 @@
+use fluent_bundle::FluentArgs;
 /// Represents the target audience for the app.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Audience {
@@ -115,5 +116,30 @@ impl HireMeModel {
 
     pub fn current_lang_name(&self) -> &'static str {
         Self::lang_name(&self.current_lang)
+    }
+
+     pub fn to_args(&self) -> FluentArgs {
+        let mut args = FluentArgs::new();
+
+        // audience: "business"/"academic"/"other"
+        let audience_code = match self.audience {
+            Audience::Business => "business",
+            Audience::Academic => "academic",
+            Audience::Other => "other",
+        };
+        args.set("audience", audience_code);
+
+        // language is short code
+        args.set("lang", Self::lang_code(&self.current_lang));
+        args.set("langName", Self::lang_name(&self.current_lang));
+        // fluency : "fluent"/"learning"/"other"
+        let fluency_code = match self.fluency {
+            Fluency::Fluent => "fluent",
+            Fluency::Learning => "learning",
+            Fluency::Other => "other",
+        };
+        args.set("level", fluency_code);
+
+        args
     }
 }

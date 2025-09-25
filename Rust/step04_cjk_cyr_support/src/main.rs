@@ -91,6 +91,11 @@ impl App for HelloApp {
                     });
             });
 
+            let args = self.model.to_args();
+            ui.label(self.i18n.t_with_args("audience", &args));
+            ui.label(self.i18n.t_with_args("fluency", &args));
+            ui.label(self.i18n.t_with_args("language-profile", &args));
+
             ui.hyperlink_to(
                 egui::RichText::new(self.i18n.t("website"))
                     .underline()

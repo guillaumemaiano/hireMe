@@ -7,9 +7,9 @@ audience = { $audience ->
 }
 
 fluency = { $level ->
-    [fluent] 我能自如地使用 { $lang } 工作 —— 会议、写作或谈判。
-    [learning] 我正在持续学习 { $lang } —— 足以探索思想并进行交流。
-   *[other] 我还在提升自己的 { $lang } 水平。
+    [fluent] 我能自如地使用 { $langName } 工作 —— 会议、写作或谈判。
+    [learning] 我正在持续学习 { $langName } —— 足以探索思想并进行交流。
+   *[other] 我还在提升自己的 { $langName } 水平。
 }
 
 language-profile = { $audience ->
