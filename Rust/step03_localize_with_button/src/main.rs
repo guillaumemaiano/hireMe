@@ -6,11 +6,14 @@ use hire_me_model::HireMeModel;
 use eframe::egui::{FontData, FontDefinitions, FontFamily};
 use eframe::{egui, App, Frame};
 
+const APP_NAME: &str = env!("CARGO_PKG_NAME");
+const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
+
 fn main() -> eframe::Result<()> {
     let options = eframe::NativeOptions::default();
     // frame box
     eframe::run_native(
-        "Step 01 - Hello Window",
+        &format!("{} v{}", APP_NAME, APP_VERSION),
         options,
         Box::new(|cc| {
             // fonts -- I want CrimsonText
@@ -31,7 +34,9 @@ fn main() -> eframe::Result<()> {
 
             cc.egui_ctx.set_fonts(fonts);
 
-            Ok(Box::new(HelloApp { i18n: I18n::new("en") }))
+            Ok(Box::new(HelloApp {
+                i18n: I18n::new("en"),
+            }))
         }),
     )
 }
@@ -51,17 +56,16 @@ impl App for HelloApp {
                 ))
                 .color(egui::Color32::from_rgb(220, 40, 40));
             ui.label(special);
-                    ui.add_space(8.0);
-        ui.separator();
-        ui.add_space(4.0);
+            ui.add_space(8.0);
+            ui.separator();
+            ui.add_space(4.0);
 
-        ui.hyperlink_to(
-            egui::RichText::new(self.i18n.t("website"))
-                .underline()
-                .size(20.0),
-            "https://guillaume.maiano.fr",
-        );
+            ui.hyperlink_to(
+                egui::RichText::new(self.i18n.t("website"))
+                    .underline()
+                    .size(20.0),
+                "https://guillaume.maiano.fr",
+            );
         });
-
     }
 }

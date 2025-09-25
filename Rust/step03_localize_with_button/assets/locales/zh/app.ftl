@@ -33,4 +33,4 @@ language-profile = { $audience ->
     }
 }
 hireme = 我可以参与新的项目！
-website = 查看我的简介 → guillaume.maiano.fr
+website = 查看我的简介 -> guillaume.maiano.fr

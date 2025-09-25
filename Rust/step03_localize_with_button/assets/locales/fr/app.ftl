@@ -33,4 +33,4 @@ language-profile = { $audience ->
     }
 }
 hireme = Je suis disponible pour une nouvelle mission !
-website = Engagez-moi → guillaume.maiano.fr
+website = Engagez-moi -> guillaume.maiano.fr
