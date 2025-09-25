@@ -61,7 +61,15 @@ impl App for HelloApp {
             ui.add_space(8.0);
             ui.separator();
             ui.add_space(4.0);
-
+/****/ 
+ui.add_space(12.0);
+ui.label(format!(
+    "Audience: {:?}, Language: {}, Fluency: {:?}",
+    self.model.audience,
+    self.model.current_lang_name(),
+    self.model.fluency
+));
+/**** */
             ui.hyperlink_to(
                 egui::RichText::new(self.i18n.t("website"))
                     .underline()

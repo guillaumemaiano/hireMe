@@ -37,7 +37,7 @@ impl HireMeModel {
     pub fn new() -> Self {
         Self {
             audience: Audience::Business,
-            current_lang: Language::Fr,
+            current_lang: Language::En,
             fluency: Fluency::Fluent,
         }
     }
