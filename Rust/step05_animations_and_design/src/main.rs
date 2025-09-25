@@ -5,25 +5,40 @@ use hire_me_model::HireMeModel;
 mod fonts;
 use fonts::setup_fonts;
 
-use eframe::egui::{FontData, FontDefinitions, FontFamily};
-use eframe::{App, Frame, egui};
+use eframe::{
+    App, Frame,
+    egui::{self, ColorImage, Context, FontData, FontDefinitions, FontFamily, TextureHandle, Vec2},
+};
+use image::GenericImageView;
 
 const APP_NAME: &str = env!("CARGO_PKG_NAME");
 const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> eframe::Result<()> {
     let options = eframe::NativeOptions::default();
+    // image
+    let photo = image::open("assets/GEM_EXED_MIT.png")
+        .expect("photo missing")
+        .to_rgba8();
+    let size = [photo.width() as usize, photo.height() as usize];
+    let color_image = egui::ColorImage::from_rgba_unmultiplied(size, &photo);
     // frame box
     eframe::run_native(
         &format!("{} v{}", APP_NAME, APP_VERSION),
         options,
         Box::new(|cc| {
+            // Create texture handle inside the context
+            let texture = cc
+                .egui_ctx
+                .load_texture("my_photo", color_image, Default::default());
+            // fonts come from a font struct file
             let fonts = setup_fonts();
             cc.egui_ctx.set_fonts(fonts);
 
             Ok(Box::new(HelloApp {
                 i18n: I18n::new("en"),
                 model: HireMeModel::new(),
+                texture: texture,
             }))
         }),
     )
@@ -32,6 +47,7 @@ fn main() -> eframe::Result<()> {
 struct HelloApp {
     i18n: I18n,
     model: HireMeModel,
+    texture: egui::TextureHandle,
 }
 
 impl App for HelloApp {
@@ -41,6 +57,10 @@ impl App for HelloApp {
                 .font(egui::FontId::new(32.0, egui::FontFamily::Proportional));
 
             ui.label(intro);
+            let desired_width = 400.0;
+            let aspect = self.texture.size()[1] as f32 / self.texture.size()[0] as f32;
+            let desired_size = egui::vec2(desired_width, desired_width * aspect);
+            ui.add(egui::Image::new(&self.texture).fit_to_exact_size(desired_size));
 
             let special = egui::RichText::new(self.i18n.t("hireme"))
                 .font(egui::FontId::new(32.0, egui::FontFamily::Proportional))
