@@ -61,15 +61,32 @@ impl App for HelloApp {
             ui.add_space(8.0);
             ui.separator();
             ui.add_space(4.0);
-/****/ 
-ui.add_space(12.0);
-ui.label(format!(
-    "Audience: {:?}, Language: {}, Fluency: {:?}",
-    self.model.audience,
-    self.model.current_lang_name(),
-    self.model.fluency
-));
-/**** */
+            /****/
+            ui.add_space(12.0);
+            ui.label(format!(
+                "Audience: {:?}, Language: {}, Fluency: {:?}",
+                self.model.audience,
+                self.model.current_lang_name(),
+                self.model.fluency
+            ));
+            /**** */
+            ui.add_space(12.0);
+
+            egui::ComboBox::from_label("Language")
+                .selected_text(self.model.current_lang_name())
+                .show_ui(ui, |ui| {
+                    for lang in self.model.available_languages() {
+                        let name = HireMeModel::lang_name(&lang);
+                        if ui
+                            .selectable_label(self.model.current_lang == lang, name)
+                            .clicked()
+                        {
+                            self.model.set_language(lang.clone());
+                            self.i18n.set_lang(HireMeModel::lang_code(&lang));
+                        }
+                    }
+                });
+
             ui.hyperlink_to(
                 egui::RichText::new(self.i18n.t("website"))
                     .underline()
