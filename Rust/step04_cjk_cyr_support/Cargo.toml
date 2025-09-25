@@ -1,5 +1,5 @@
 [package]
-name = "step03_localize_with_button"
+name = "step04_cjk_cyrllic_localization"
 version = "0.1.0"
 edition = "2024"
 
