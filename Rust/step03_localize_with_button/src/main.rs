@@ -61,17 +61,32 @@ impl App for HelloApp {
             ui.add_space(8.0);
             ui.separator();
             ui.add_space(4.0);
-            /****/
+/* 
             ui.add_space(12.0);
             ui.label(format!(
                 "Audience: {:?}, Language: {}, Fluency: {:?}",
                 self.model.audience,
                 self.model.current_lang_name(),
                 self.model.fluency
-            ));
-            /**** */
+            )); */
+
             ui.add_space(12.0);
 
+            ui.horizontal(|ui| {
+            egui::ComboBox::from_label("Audience")
+                .selected_text(self.model.current_audience_name())
+                .show_ui(ui, |ui| {
+                    for name in HireMeModel::all_audiences() {
+                        if ui
+                            .selectable_label(self.model.current_audience_name() == name, name)
+                            .clicked()
+                        {
+                            self.model.set_audience_by_name(name);
+                            self.model.set_lang_default();
+                            self.i18n.set_lang("en");
+                        }
+                    }
+                });
             egui::ComboBox::from_label("Language")
                 .selected_text(self.model.current_lang_name())
                 .show_ui(ui, |ui| {
@@ -86,6 +101,7 @@ impl App for HelloApp {
                         }
                     }
                 });
+            });
 
             ui.hyperlink_to(
                 egui::RichText::new(self.i18n.t("website"))

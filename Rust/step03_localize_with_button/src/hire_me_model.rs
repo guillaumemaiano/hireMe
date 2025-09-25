@@ -41,6 +41,29 @@ impl HireMeModel {
             fluency: Fluency::Fluent,
         }
     }
+ pub fn all_audiences() -> Vec<&'static str> {
+        vec!["Business", "Academic", "Other"]
+    }
+
+    pub fn current_audience_name(&self) -> &'static str {
+        match self.audience {
+            Audience::Business => "Business",
+            Audience::Academic => "Academic",
+            Audience::Other => "Other",
+        }
+    }
+
+    pub fn set_audience_by_name(&mut self, name: &str) {
+        self.audience = match name {
+            "Business" => Audience::Business,
+            "Academic" => Audience::Academic,
+            _ => Audience::Other,
+        };
+    }
+
+    pub fn set_lang_default(&mut self) {
+        self.current_lang = Language::En;
+    }
 
     /// Return the list of available languages based on the audience.
     pub fn available_languages(&self) -> Vec<Language> {
