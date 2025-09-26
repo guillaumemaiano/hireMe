@@ -1,5 +1,5 @@
 [package]
-name = "step01_hello_window"
+name = "step02_color_hello_window"
 version = "0.1.0"
 edition = "2024"
 
