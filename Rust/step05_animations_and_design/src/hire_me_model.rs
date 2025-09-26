@@ -22,7 +22,6 @@ pub enum Language {
 pub enum Fluency {
     Fluent,
     Learning,
-    Other,
 }
 
 #[derive(Clone, Debug)]
@@ -94,6 +93,7 @@ impl HireMeModel {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_audience(&mut self, audience: Audience) {
         self.audience = audience;
     }
@@ -102,11 +102,13 @@ impl HireMeModel {
         self.current_lang = lang;
     }
 
+    #[allow(dead_code)]
     pub fn set_fluency(&mut self, fluency: Fluency) {
         self.fluency = fluency;
     }
 
     // some helpers because I'd rather have readable UI code
+    #[allow(dead_code)] // though for now I'm not rewiring everything yet
     pub fn current_lang_code(&self) -> &'static str {
         Self::lang_code(&self.current_lang)
     }
@@ -133,7 +135,6 @@ impl HireMeModel {
         let fluency_code = match self.fluency {
             Fluency::Fluent => "fluent",
             Fluency::Learning => "learning",
-            Fluency::Other => "other",
         };
         args.set("level", fluency_code);
 

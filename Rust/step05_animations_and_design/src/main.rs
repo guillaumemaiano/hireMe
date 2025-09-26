@@ -120,12 +120,24 @@ impl App for HelloApp {
                                     })
                                     .body(|mut body| {
                                         for lp in self.model.languages_with_fluency() {
+                                            let mut args = self.model.to_args();
+                                            args.set("lang", HireMeModel::lang_code(&lp.lang));
+                                            args.set("langName", HireMeModel::lang_name(&lp.lang)); // fallback
+                                            args.set(
+                                                "level",
+                                                match lp.fluency {
+                                                    hire_me_model::Fluency::Fluent => "fluent",
+                                                    hire_me_model::Fluency::Learning => "learning",
+                                                },
+                                            );
                                             body.row(20.0, |mut row| {
                                                 row.col(|ui| {
-                                                    ui.label(HireMeModel::lang_name(&lp.lang));
+                                                    ui.label(
+                                                    self.i18n
+                                                        .t_with_args("language-profile", &args));
                                                 });
                                                 row.col(|ui| {
-                                                    ui.label(format!("{:?}", lp.fluency));
+                                                      ui.label(self.i18n.t_with_args("fluency", &args));
                                                 });
                                             });
                                         }
