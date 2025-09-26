@@ -34,3 +34,5 @@ language-profile = { $audience ->
 }
 hireme = Disponibile per una nuova collaborazione!
 website = Scopri il mio profilo -> guillaume.maiano.fr
+table-language = Lingua
+table-level = Livello

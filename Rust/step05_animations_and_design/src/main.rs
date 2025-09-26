@@ -7,9 +7,9 @@ use fonts::setup_fonts;
 
 use eframe::{
     App, Frame,
-    egui::{self, ColorImage, Context, FontData, FontDefinitions, FontFamily, TextureHandle, Vec2},
+    egui::{self},
 };
-use image::GenericImageView;
+use egui_extras::{Column, TableBuilder};
 
 const APP_NAME: &str = env!("CARGO_PKG_NAME");
 const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -56,27 +56,73 @@ impl App for HelloApp {
             let intro = egui::RichText::new(self.i18n.t("intro"))
                 .font(egui::FontId::new(32.0, egui::FontFamily::Proportional));
 
-            ui.label(intro);
-            let desired_width = 400.0;
-            let aspect = self.texture.size()[1] as f32 / self.texture.size()[0] as f32;
-            let desired_size = egui::vec2(desired_width, desired_width * aspect);
-            ui.add(egui::Image::new(&self.texture).fit_to_exact_size(desired_size));
+            egui::Frame::group(ui.style()).show(ui, |ui| {
+                let avail = ui.available_width();
+                // 60% of screen, max 600 px -- Labels inside the "group"
+                // Should look OK on reasonable-size screens?
+                let target = (avail * 0.6).clamp(300.0, 600.0);
 
-            let special = egui::RichText::new(self.i18n.t("hireme"))
-                .font(egui::FontId::new(32.0, egui::FontFamily::Proportional))
-                .color(egui::Color32::from_rgb(220, 40, 40));
-            ui.label(special);
-            ui.add_space(8.0);
-            ui.separator();
-            ui.add_space(4.0);
-            /*
-            ui.add_space(12.0);
-            ui.label(format!(
-                "Audience: {:?}, Language: {}, Fluency: {:?}",
-                self.model.audience,
-                self.model.current_lang_name(),
-                self.model.fluency
-            )); */
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
+                    let w = 250.0;
+                    let aspect = self.texture.size()[1] as f32 / self.texture.size()[0] as f32;
+                    let size = egui::vec2(w, w * aspect);
+                    ui.add(egui::Image::new(&self.texture).fit_to_exact_size(size));
+
+                    ui.vertical(|ui| {
+                        ui.set_max_width(target);
+                        ui.label(intro);
+
+                        let special = egui::RichText::new(self.i18n.t("hireme"))
+                            .font(egui::FontId::new(32.0, egui::FontFamily::Proportional))
+                            .color(egui::Color32::from_rgb(220, 40, 40));
+                        ui.label(special);
+
+                        ui.add_space(8.0);
+                        ui.separator();
+                        ui.add_space(4.0);
+
+                        match self.model.audience {
+                            hire_me_model::Audience::Academic => {
+                                ui.separator();
+                                ui.heading("Languages");
+
+                                TableBuilder::new(ui)
+                                    .striped(true)
+                                    .column(Column::auto())
+                                    .column(Column::remainder())
+                                    .header(20.0, |mut header| {
+                                        header.col(|ui| {
+                                            ui.label(self.i18n.t("table-language"));
+                                        });
+                                        header.col(|ui| {
+                                            ui.label(self.i18n.t("table-level"));
+                                        });
+                                    })
+                                    .body(|mut body| {
+                                        for lp in self.model.languages_with_fluency() {
+                                            body.row(20.0, |mut row| {
+                                                row.col(|ui| {
+                                                    ui.label(HireMeModel::lang_name(&lp.lang));
+                                                });
+                                                row.col(|ui| {
+                                                    ui.label(format!("{:?}", lp.fluency));
+                                                });
+                                            });
+                                        }
+                                    });
+                            }
+                            hire_me_model::Audience::Business => {
+                                let args = self.model.to_args();
+                                ui.label(self.i18n.t_with_args("language-profile", &args));
+                            }
+                            hire_me_model::Audience::Other => {
+                                let args = self.model.to_args();
+                                ui.label(self.i18n.t_with_args("language-profile", &args));
+                            }
+                        }
+                    });
+                });
+            });
 
             ui.add_space(12.0);
 
@@ -95,6 +141,7 @@ impl App for HelloApp {
                             }
                         }
                     });
+
                 egui::ComboBox::from_label("Language")
                     .selected_text(self.model.current_lang_name())
                     .show_ui(ui, |ui| {

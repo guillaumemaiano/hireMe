@@ -34,3 +34,5 @@ language-profile = { $audience ->
 }
 hireme = Я готов к новому проекту!
 website = Смотрите мой профиль -> guillaume.maiano.fr
+table-language = Язык
+table-level = Уровень

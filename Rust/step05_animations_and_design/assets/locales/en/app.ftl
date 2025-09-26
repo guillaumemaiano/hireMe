@@ -34,3 +34,5 @@ language-profile = { $audience ->
 }
 hireme = I'm available for hire!
 website = Hire me -> guillaume.maiano.fr
+table-language = Language
+table-level = Level

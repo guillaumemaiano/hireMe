@@ -25,6 +25,12 @@ pub enum Fluency {
     Other,
 }
 
+#[derive(Clone, Debug)]
+pub struct LangProfile {
+    pub lang: Language,
+    pub fluency: Fluency,
+}
+
 /// The core model holding the app state.
 #[derive(Debug, Clone)]
 pub struct HireMeModel {
@@ -42,7 +48,7 @@ impl HireMeModel {
             fluency: Fluency::Fluent,
         }
     }
- pub fn all_audiences() -> Vec<&'static str> {
+    pub fn all_audiences() -> Vec<&'static str> {
         vec!["Business", "Academic", "Other"]
     }
 
@@ -64,15 +70,6 @@ impl HireMeModel {
 
     pub fn set_lang_default(&mut self) {
         self.current_lang = Language::En;
-    }
-
-    /// Return the list of available languages based on the audience.
-    pub fn available_languages(&self) -> Vec<Language> {
-        match self.audience {
-            Audience::Business => vec![Language::Fr, Language::En],
-            Audience::Academic => vec![Language::Fr, Language::En, Language::Ru, Language::Zh, Language::It],
-            Audience::Other => vec![Language::Fr, Language::En],
-        }
     }
 
     /// Utility: return a short string code for a language (for FTL args).
@@ -118,7 +115,7 @@ impl HireMeModel {
         Self::lang_name(&self.current_lang)
     }
 
-     pub fn to_args(&self) -> FluentArgs {
+    pub fn to_args(&self) -> FluentArgs {
         let mut args = FluentArgs::new();
 
         // audience: "business"/"academic"/"other"
@@ -141,5 +138,53 @@ impl HireMeModel {
         args.set("level", fluency_code);
 
         args
+    }
+
+    pub fn all_languages(&self) -> Vec<LangProfile> {
+        vec![
+            LangProfile {
+                lang: Language::Fr,
+                fluency: Fluency::Fluent,
+            },
+            LangProfile {
+                lang: Language::En,
+                fluency: Fluency::Fluent,
+            },
+            LangProfile {
+                lang: Language::Ru,
+                fluency: Fluency::Learning,
+            },
+            LangProfile {
+                lang: Language::Zh,
+                fluency: Fluency::Learning,
+            },
+            LangProfile {
+                lang: Language::It,
+                fluency: Fluency::Learning,
+            },
+        ]
+    }
+
+    /// Return the list of available languages based on the audience.
+    pub fn available_languages(&self) -> Vec<Language> {
+        match self.audience {
+            Audience::Business => vec![Language::Fr, Language::En],
+            Audience::Academic => vec![
+                Language::Fr,
+                Language::En,
+                Language::Ru,
+                Language::Zh,
+                Language::It,
+            ],
+            Audience::Other => vec![Language::Fr, Language::En],
+        }
+    }
+
+    pub fn languages_with_fluency(&self) -> Vec<LangProfile> {
+        let avail = self.available_languages();
+        self.all_languages()
+            .into_iter()
+            .filter(|lp| avail.contains(&lp.lang))
+            .collect()
     }
 }
