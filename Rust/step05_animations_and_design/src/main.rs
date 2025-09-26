@@ -73,91 +73,6 @@ struct HelloApp {
 impl App for HelloApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            let intro = egui::RichText::new(self.i18n.t("intro"))
-                .font(egui::FontId::new(32.0, egui::FontFamily::Proportional));
-
-            egui::Frame::group(ui.style()).show(ui, |ui| {
-                let avail = ui.available_width();
-                // 60% of screen, max 600 px -- Labels inside the "group"
-                // Should look OK on reasonable-size screens?
-                let target = (avail * 0.6).clamp(300.0, 600.0);
-
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
-                    let w = 250.0;
-                    let aspect = self.texture.size()[1] as f32 / self.texture.size()[0] as f32;
-                    let size = egui::vec2(w, w * aspect);
-                    ui.add(egui::Image::new(&self.texture).fit_to_exact_size(size));
-
-                    ui.vertical(|ui| {
-                        ui.set_max_width(target);
-                        ui.label(intro);
-
-                        let special = egui::RichText::new(self.i18n.t("hireme"))
-                            .font(egui::FontId::new(32.0, egui::FontFamily::Proportional))
-                            .color(egui::Color32::from_rgb(220, 40, 40));
-                        ui.label(special);
-
-                        ui.add_space(8.0);
-                        ui.separator();
-                        ui.add_space(4.0);
-
-                        match self.model.audience {
-                            hire_me_model::Audience::Academic => {
-                                ui.separator();
-                                ui.heading("Languages");
-
-                                TableBuilder::new(ui)
-                                    .striped(true)
-                                    .column(Column::auto())
-                                    .column(Column::remainder())
-                                    .header(20.0, |mut header| {
-                                        header.col(|ui| {
-                                            ui.label(self.i18n.t("table-language"));
-                                        });
-                                        header.col(|ui| {
-                                            ui.label(self.i18n.t("table-level"));
-                                        });
-                                    })
-                                    .body(|mut body| {
-                                        for lp in self.model.languages_with_fluency() {
-                                            let mut args = self.model.to_args();
-                                            args.set("lang", HireMeModel::lang_code(&lp.lang));
-                                            args.set("langName", HireMeModel::lang_name(&lp.lang)); // fallback
-                                            args.set(
-                                                "level",
-                                                match lp.fluency {
-                                                    hire_me_model::Fluency::Fluent => "fluent",
-                                                    hire_me_model::Fluency::Learning => "learning",
-                                                },
-                                            );
-                                            body.row(20.0, |mut row| {
-                                                row.col(|ui| {
-                                                    ui.label(
-                                                    self.i18n
-                                                        .t_with_args("language-profile", &args));
-                                                });
-                                                row.col(|ui| {
-                                                      ui.label(self.i18n.t_with_args("fluency", &args));
-                                                });
-                                            });
-                                        }
-                                    });
-                            }
-                            hire_me_model::Audience::Business => {
-                                let args = self.model.to_args();
-                                ui.label(self.i18n.t_with_args("language-profile", &args));
-                            }
-                            hire_me_model::Audience::Other => {
-                                let args = self.model.to_args();
-                                ui.label(self.i18n.t_with_args("language-profile", &args));
-                            }
-                        }
-                    });
-                });
-            });
-
-            ui.add_space(12.0);
-
             ui.horizontal(|ui| {
                 egui::ComboBox::from_label("Audience")
                     .selected_text(self.model.current_audience_name())
@@ -190,17 +105,122 @@ impl App for HelloApp {
                     });
             });
 
-            let args = self.model.to_args();
-            ui.label(self.i18n.t_with_args("audience", &args));
-            ui.label(self.i18n.t_with_args("fluency", &args));
-            ui.label(self.i18n.t_with_args("language-profile", &args));
+            let intro = egui::RichText::new(self.i18n.t("intro"))
+                .font(egui::FontId::new(32.0, egui::FontFamily::Proportional));
+            ui.vertical(|ui| {
+                ui.set_width(ui.available_width()); // force both children to use same width
+                egui::Frame::group(ui.style()).show(ui, |ui| {
+                    let avail = ui.available_width();
+                    // 60% of screen, max 600 px -- Labels inside the "group"
+                    // Should look OK on reasonable-size screens?
+                    let target = (avail * 0.6).clamp(300.0, 600.0);
 
-            ui.hyperlink_to(
-                egui::RichText::new(self.i18n.t("website"))
-                    .underline()
-                    .size(20.0),
-                "https://guillaume.maiano.fr",
-            );
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::TOP), |ui| {
+                        let w = 250.0;
+                        let aspect = self.texture.size()[1] as f32 / self.texture.size()[0] as f32;
+                        let size = egui::vec2(w, w * aspect);
+                        ui.add(egui::Image::new(&self.texture).fit_to_exact_size(size));
+
+                        ui.vertical(|ui| {
+                            ui.set_max_width(target);
+                            ui.label(intro);
+
+                            let special = egui::RichText::new(self.i18n.t("hireme"))
+                                .font(egui::FontId::new(32.0, egui::FontFamily::Proportional))
+                                .color(egui::Color32::from_rgb(220, 40, 40));
+                            ui.label(special);
+
+                            ui.add_space(8.0);
+                            ui.separator();
+                            ui.add_space(4.0);
+
+                            match self.model.audience {
+                                hire_me_model::Audience::Academic => {
+                                    ui.separator();
+                                    ui.heading("Languages");
+
+                                    TableBuilder::new(ui)
+                                        .striped(true)
+                                        .column(Column::remainder().resizable(true).clip(false)) // 2 shares
+                                        .column(Column::remainder().resizable(true).clip(false)) // 1 share
+                                        .header(20.0, |mut header| {
+                                            header.col(|ui| {
+                                                ui.label(self.i18n.t("table-language"));
+                                            });
+                                            header.col(|ui| {
+                                                ui.label(self.i18n.t("table-level"));
+                                            });
+                                        })
+                                        .body(|mut body| {
+                                            for lp in self.model.languages_with_fluency() {
+                                                let mut args = self.model.to_args();
+                                                args.set("lang", HireMeModel::lang_code(&lp.lang));
+                                                args.set(
+                                                    "langName",
+                                                    HireMeModel::lang_name(&lp.lang),
+                                                ); // fallback
+                                                args.set(
+                                                    "level",
+                                                    match lp.fluency {
+                                                        hire_me_model::Fluency::Fluent => "fluent",
+                                                        hire_me_model::Fluency::Learning => {
+                                                            "learning"
+                                                        }
+                                                    },
+                                                );
+                                                body.row(20.0, |mut row| {
+                                                    row.col(|ui| {
+                                                        ui.label(self.i18n.t_with_args(
+                                                            "language-profile",
+                                                            &args,
+                                                        ));
+                                                    });
+                                                    row.col(|ui| {
+                                                        ui.label(
+                                                            self.i18n.t_with_args("fluency", &args),
+                                                        );
+                                                    });
+                                                });
+                                            }
+                                        });
+                                }
+                                hire_me_model::Audience::Business => {
+                                    let args = self.model.to_args();
+                                    ui.label(self.i18n.t_with_args("language-profile", &args));
+                                }
+                                hire_me_model::Audience::Other => {
+                                    let args = self.model.to_args();
+                                    ui.label(self.i18n.t_with_args("language-profile", &args));
+                                }
+                            }
+                        });
+                    });
+                });
+
+                ui.add_space(12.0);
+                egui::Frame::group(ui.style()).show(ui, |ui| {
+                    ui.set_min_width(ui.available_width());
+                    egui::ScrollArea::vertical()
+                        .max_height(200.0) // clamp height so scrolling activates
+                        .show(ui, |ui| {
+                            ui.horizontal(|ui| {
+                                ui.vertical(|ui| {
+                                    let args = self.model.to_args();
+                                    ui.label(self.i18n.t_with_args("audience", &args));
+                                    ui.label(self.i18n.t_with_args("fluency", &args));
+                                    ui.label(self.i18n.t_with_args("language-profile", &args));
+                                });
+                                ui.add_space(12.0);
+                                ui.hyperlink_to(
+                                    egui::RichText::new(self.i18n.t("website"))
+                                        .underline()
+                                        .size(20.0),
+                                    "https://guillaume.maiano.fr",
+                                );
+                            });
+                        });
+                });
+            });
         });
     }
 }
