@@ -15,7 +15,27 @@ const APP_NAME: &str = env!("CARGO_PKG_NAME");
 const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> eframe::Result<()> {
-    let options = eframe::NativeOptions::default();
+    let icon = match image::open("assets/topGem.png") {
+        Ok(img) => {
+            let img = img.to_rgba8();
+            let (w, h) = img.dimensions();
+            Some(egui::IconData {
+                rgba: img.into_raw(),
+                width: w,
+                height: h,
+            })
+        }
+        Err(_) => None,
+    };
+    let mut viewport = egui::ViewportBuilder::default();
+    if let Some(icon) = icon {
+        viewport = viewport.with_icon(std::sync::Arc::new(icon));
+    }
+
+    let options = eframe::NativeOptions {
+        viewport,
+        ..Default::default()
+    };
     // image
     let photo = image::open("assets/GEM_EXED_MIT.png")
         .expect("photo missing")
