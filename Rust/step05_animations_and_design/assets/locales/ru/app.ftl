@@ -7,9 +7,9 @@ audience = { $audience ->
 }
 
 fluency = { $level ->
-    [fluent] Я свободно работаю на { $langName } — встречи, переписка и переговоры.
-    [learning] Я последовательно изучаю { $langName } — достаточно, чтобы обсуждать идеи и вести разговор.
-   *[other] Я всё ещё развиваю навыки в { $langName }.
+    [fluent] Я свободно работаю на { lang-name } — встречи, переписка и переговоры.
+    [learning] Я последовательно изучаю { lang-name } — достаточно, чтобы обсуждать идеи и вести разговор.
+   *[other] Я всё ещё развиваю навыки в { lang-name }.
 }
 
 language-profile = { $audience ->
@@ -34,5 +34,21 @@ language-profile = { $audience ->
 }
 hireme = Я готов к новому проекту!
 website = Смотрите мой профиль -> guillaume.maiano.fr
+
 table-language = Язык
 table-level = Уровень
+
+-lang-name-fr = Французский
+-lang-name-en = Английский
+-lang-name-ru = Русский
+-lang-name-zh = Китайский
+-lang-name-it = Итальянский
+
+lang-name = { $lang ->
+   [fr] { -lang-name-fr }
+   [en] { -lang-name-en }
+   [ru] { -lang-name-ru }
+   [zh] { -lang-name-zh }
+   [it] { -lang-name-it }
+  *[other] ???
+}

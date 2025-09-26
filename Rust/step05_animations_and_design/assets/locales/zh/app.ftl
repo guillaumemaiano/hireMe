@@ -7,9 +7,9 @@ audience = { $audience ->
 }
 
 fluency = { $level ->
-    [fluent] 我能自如地使用 { $langName } 工作 —— 会议、写作或谈判。
-    [learning] 我正在持续学习 { $langName } —— 足以探索思想并进行交流。
-   *[other] 我还在提升自己的 { $langName } 水平。
+    [fluent] 我能自如地使用 { lang-name } 工作 —— 会议、写作或谈判。
+    [learning] 我正在持续学习 { lang-name } —— 足以探索思想并进行交流。
+   *[other] 我还在提升自己的 { lang-name } 水平。
 }
 
 language-profile = { $audience ->
@@ -36,3 +36,18 @@ hireme = 我可以参与新的项目！
 website = 查看我的简介 -> guillaume.maiano.fr
 table-language = 语言
 table-level = 水平
+
+-lang-name-fr = 法语
+-lang-name-en = 英语
+-lang-name-ru = 俄语
+-lang-name-zh = 中文
+-lang-name-it = 意大利语
+
+lang-name = { $lang ->
+   [fr] { -lang-name-fr }
+   [en] { -lang-name-en }
+   [ru] { -lang-name-ru }
+   [zh] { -lang-name-zh }
+   [it] { -lang-name-it }
+  *[other] ???
+}
