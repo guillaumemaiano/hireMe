@@ -1,4 +1,4 @@
-use egui;
+use eframe::egui;
 use crate::spy::spy_view::SpyRenderable;
 
 /// A line of text that reveals itself character by character.

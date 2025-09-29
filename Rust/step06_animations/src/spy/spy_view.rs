@@ -7,7 +7,7 @@
 //! ```
 
 // Note: I initially wanted to be library independant, but it is not sensible for a demo project that already chose egui.
-use egui;
+use eframe::egui;
 
 /// A trait for any item that can be revealed inside a [`SpyView`].
 ///
