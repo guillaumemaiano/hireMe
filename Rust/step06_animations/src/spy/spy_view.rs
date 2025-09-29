@@ -6,6 +6,9 @@
 //! let mut view = SpyView::new(items);
 //! ```
 
+// Note: I initially wanted to be library independant, but it is not sensible for a demo project that already chose egui.
+use egui;
+
 /// A trait for any item that can be revealed inside a [`SpyView`].
 ///
 /// Each `SpyRenderable` represents one step in a spy-style sequence:
@@ -24,7 +27,7 @@
 ///
 /// # Examples
 /// A minimal “typing” line:
-/// ```
+/// ```no_run
 /// struct MyLine { text: String, shown: usize }
 ///
 /// impl SpyRenderable for MyLine {
@@ -33,38 +36,26 @@
 ///         true
 ///     }
 ///
-///     fn draw(&self, ctx: &mut RenderCtx) {
-///         ctx.draw_text(&self.text[..self.shown]);
+///     fn draw(&self, ui: &mut egui::Ui) {
+///         ui.label(&self.text[..self.shown]);
 ///     }
 /// }
 /// ```
-///
 /// # Notes for implementors -- eg, probably just me in a few months ;)
 /// - Keep `update` idempotent: once it returns `true`, further calls should
 ///   continue to return `true`.
 /// - If you need to reset an item for reuse, provide a custom `reset()` method
 ///   on your type; don’t overload `start`.
+
 pub trait SpyRenderable {
     /// Called once when the item begins.
     fn start(&mut self) {}
 
-    /// Advance animation by `dt` seconds.  
+    /// Advance animation by `dt` seconds.
     ///
     /// Returns `true` once the item has fully finished revealing.
     fn update(&mut self, dt: f32) -> bool;
 
-    /// Draw the current state into the provided render context.
-    fn draw(&self, ctx: &mut RenderCtx);
-}
-
-pub trait SpyRenderable {
-    /// Called once when the item starts.
-    fn start(&mut self) {}
-
-    /// Advance animation by dt seconds.
-    /// Returns true when the item is fully revealed / done.
-    fn update(&mut self, dt: f32) -> bool;
-
-    /// Draw current state into whatever render context you use.
-    fn draw(&self, ctx: &mut RenderCtx);
+    /// Draw the current state into the provided egui UI.
+    fn draw(&self, ui: &mut egui::Ui);
 }
