@@ -4,6 +4,7 @@ mod hire_me_model;
 use hire_me_model::HireMeModel;
 mod fonts;
 use fonts::setup_fonts;
+use crate::spy::{SpyRenderable, SpyLine};
 
 use eframe::{
     App, Frame,
