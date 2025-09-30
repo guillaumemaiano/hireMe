@@ -3,7 +3,7 @@ use std::path::Path;
 
 use serde::Deserialize;
 
-/// Provide a default duration (5s) for picture reveal animations.
+/// Provide a default duration (5s) for reveal animations.
 fn default_duration() -> f32 {
     5.0
 }
@@ -21,10 +21,9 @@ pub enum SpyInfo {
     TextBlock {
         lines: Vec<String>,
         chars_per_sec: f32,
-        /// Optional duration: how long to display before auto-advance.
-        /// `None` = stays until user action.
-        #[serde(default)]
-        duration: Option<f32>,
+        /// Duration always has a value; defaults to 5s if not provided.
+        #[serde(default = "default_duration")]
+        duration: f32,
     },
 
     /// A picture, revealed progressively.
@@ -88,27 +87,24 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_textblock_from_json() {
+    fn parse_textblock_with_defaults() {
         let json = r#"
         {
             "items": [
                 {
                     "type": "TextBlock",
                     "lines": ["Hello", "World"],
-                    "chars_per_sec": 15.0,
-                    "duration": null
+                    "chars_per_sec": 15.0
                 }
             ]
         }"#;
 
         let script: SpyScript = serde_json::from_str(json).unwrap();
-        assert_eq!(script.items.len(), 1);
-
         match &script.items[0] {
             SpyInfo::TextBlock { lines, chars_per_sec, duration } => {
                 assert_eq!(lines, &vec!["Hello".into(), "World".into()]);
                 assert_eq!(*chars_per_sec, 15.0);
-                assert!(duration.is_none());
+                assert_eq!(*duration, 5.0); // default applied
             }
             _ => panic!("Expected TextBlock"),
         }
@@ -142,7 +138,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_picture_without_duration_or_max_width_uses_defaults() {
+    fn parse_picture_with_defaults() {
         let json = r#"
         {
             "items": [
