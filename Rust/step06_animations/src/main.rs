@@ -5,11 +5,13 @@ use hire_me_model::HireMeModel;
 mod fonts;
 use fonts::setup_fonts;
 mod spy;
-use crate::spy::{SpyRenderable, SpyLine};
+mod spy_data_view;
+use crate::spy::{SpyInfo, SpyScript};
+use crate::spy_data_view::SpyDataView;
 
 use eframe::{
-    App, Frame,
     egui::{self},
+    App, Frame,
 };
 use egui_extras::{Column, TableBuilder};
 
@@ -222,6 +224,13 @@ impl App for HelloApp {
                             });
                         });
                 });
+                let script = SpyScript::new(vec![SpyInfo::TextBlock {
+                    lines: vec!["Hello".into()],
+                    chars_per_sec: 10.0,
+                    duration: None,
+                }]);
+
+                let mut screen = SpyDataView::new(script, &mut texture_loader);
             });
         });
     }
