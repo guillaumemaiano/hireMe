@@ -1,0 +1,13 @@
+{
+    "items": [
+        {
+            "type": "TextBlock",
+            "lines": [
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "Vivamus sed nunc in ipsum gravida volutpat."
+            ],
+            "chars_per_sec": 4.0,
+            "duration": 8.0
+        }
+    ]
+}

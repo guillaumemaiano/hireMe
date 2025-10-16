@@ -1,35 +1,71 @@
-mod spy;
-
-use crate::spy::{SpyRenderable, SpyLine};
-use crate::spy::{SpyLine, SpyPic, SpyRenderable};
+use crate::spy::SpyRenderable;
 
 pub struct SpyDataView {
+    items: Vec<Box<dyn SpyRenderable>>,
 }
 
 impl SpyDataView {
-    pub fn new(script: SpyScript, texture_loader: &mut TextureLoader) -> Self {
-        let mut items: Vec<Box<dyn SpyRenderable>> = Vec::new();
+    pub fn new(items: Vec<Box<dyn SpyRenderable>>) -> Self {
+        Self { items }
+    }
 
-        for info in script.items {
-            match info {
-                SpyInfo::TextBlock { lines, chars_per_sec, .. } => {
-                    for line in lines {
-                        items.push(Box::new(SpyLine::new(line, chars_per_sec)));
-                    }
-                }
-                SpyInfo::Picture { path, segments, duration } => {
-                    let tex_id = texture_loader.load(&path);
-                    items.push(Box::new(SpyPic::new(tex_id, segments, duration.unwrap_or(5.0))));
-                }
+    pub fn update(&mut self, dt: f32) -> bool {
+        let mut all_done = true;
+        for item in &mut self.items {
+            if !item.update(dt) {
+                all_done = false;
+            }
+        }
+        all_done
+    }
+
+    pub fn draw(&self, ui: &mut eframe::egui::Ui) {
+        for item in &self.items {
+            item.draw(ui);
+        }
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use eframe::egui;
+    use std::cell::RefCell;
+
+    struct DummyRenderable {
+        updates: RefCell<u32>,
+        done_after: u32,
+    }
+
+    impl DummyRenderable {
+        fn new(done_after: u32) -> Self {
+            Self {
+                updates: RefCell::new(0),
+                done_after,
             }
         }
     }
 
-    pub fn update(&mut self, dt: f32) -> bool {
-        self.view.update(dt)
+    impl SpyRenderable for DummyRenderable {
+        fn update(&mut self, _dt: f32) -> bool {
+            let mut n = self.updates.borrow_mut();
+            *n += 1;
+            *n >= self.done_after
+        }
+        fn draw(&self, _ui: &mut egui::Ui) {}
     }
 
-    pub fn draw(&mut self, ui: &mut eframe::egui::Ui) {
-        self.view.draw(ui);
+    #[test]
+    fn update_returns_false_until_all_done() {
+        let items: Vec<Box<dyn SpyRenderable>> = vec![
+            Box::new(DummyRenderable::new(2)),
+            Box::new(DummyRenderable::new(3)),
+        ];
+        let mut view = SpyDataView::new(items);
+        // first call: not all done
+        assert!(!view.update(1.0));
+        // second call: still not all done
+        assert!(!view.update(1.0));
+        // third call: all done
+        assert!(view.update(1.0));
     }
 }
